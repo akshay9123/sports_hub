@@ -6,14 +6,13 @@ import {
   getCustomerById,
   updateCustomer,
 } from "../controllers/customer.controller.js";
-import { protectRoute } from "../middleware/auth.middleware.js";
+// import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 // ROUTES TO ADD THE NEW CUSTOMER
 router.post(
   "/add-customer",
-  protectRoute,
   upload.fields([
     { name: "profile_photo", maxCount: 1 },
     { name: "attachment", maxCount: 1 },
@@ -22,15 +21,14 @@ router.post(
 );
 
 // ROUTES TO GET ALL THE CUSTOMER
-router.get("/get_all_customer", protectRoute, getAllCustomers);
+router.get("/get_all_customer", getAllCustomers);
 
 // ROUTES TO GET CUSTOMER BY ID
-router.get("/getCustomer/:id", protectRoute, getCustomerById);
+router.get("/getCustomer/:id", getCustomerById);
 
 // ROUTES TO UPDATE THE CUSTOMER
 router.put(
   "/updateCustomer/:id",
-  protectRoute,
   upload.single("profile_photo"),
   updateCustomer
 );
