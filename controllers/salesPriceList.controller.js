@@ -1,4 +1,4 @@
-import SalesPriceList from "../models/salesPriceList.model.js";
+import SalesPriceList from "../model/salesPriceList.model.js";
 
 // CREATE
 export const createSalesPriceList = async (req, res) => {
