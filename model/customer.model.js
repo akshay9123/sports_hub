@@ -106,6 +106,7 @@ const CustomerSchema = new mongoose.Schema({
   route_map: {
     type: String,
   },
+  
 
 
 

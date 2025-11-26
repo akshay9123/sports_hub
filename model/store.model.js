@@ -12,7 +12,7 @@ const storeSchema = new mongoose.Schema({
 });
 
 // Auto-generate code ALWAYS
-priceCategorySchema.pre("save", async function (next) {
+storeSchema.pre("save", async function (next) {
   // ALWAYS auto-generate -- user can never give code
   const lastDoc = await this.constructor.findOne().sort({ code: -1 });
 
