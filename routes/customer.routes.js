@@ -2,6 +2,7 @@ import express from "express";
 import upload from "../config/multer.js";
 import {
   addCustomer,
+  deleteCustomer,
   getAllCustomers,
   getCustomerById,
   updateCustomer,
@@ -32,5 +33,11 @@ router.put(
   upload.single("profile_photo"),
   updateCustomer
 );
+
+// ROUTES TO DELETE THE CUSTOMER
+router.delete(
+  "/deleteCustomer/:id",
+  deleteCustomer
+)
 
 export default router;

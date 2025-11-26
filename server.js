@@ -11,6 +11,7 @@ const app = express();
 import useroutes from "./routes/user.routes.js";
 import customerRoutes from "./routes/customer.routes.js"
 import salesList from "./routes/salesPriceList.routes.js"
+import priceCategory from './routes/priceCategory.routes.js'
 
 // Database Connection
 connectDb();
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", useroutes);
 app.use("/api/customer", customerRoutes)
 app.use("/api/sales_list", salesList)
+app.use("/api/price_category",priceCategory)
 
 
 // server starting
