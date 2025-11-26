@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../model/user.model.js";
+import User from "../model/User.model.js";
 import jwt from "jsonwebtoken";
 
 export const registerUserRequest = async (req, res) => {
