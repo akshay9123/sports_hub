@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import User from "../model/User.model.js";
 import jwt from "jsonwebtoken";
+import User from "../model/user.model.js";
 
 export const registerUserRequest = async (req, res) => {
   const { username, name, email, password, role } = req.body;

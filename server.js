@@ -14,6 +14,7 @@ import salesList from "./routes/salesPriceList.routes.js"
 import priceCategory from './routes/priceCategory.routes.js'
 import store from "./routes/store.routes.js"
 import salesinvoice from "./routes/salesInvoice.routes.js"
+import itemMaster from "./routes/itemMaster.routes.js"
 
 // Database Connection
 connectDb();
@@ -39,6 +40,7 @@ app.use("/api/sales_list", salesList)
 app.use("/api/price_category",priceCategory)
 app.use("/api/store", store)
 app.use("/api/salesinvoice", salesinvoice);
+app.use("/api/item_master", itemMaster)
 
 
 // server starting
