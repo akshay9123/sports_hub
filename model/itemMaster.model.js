@@ -15,8 +15,7 @@ const ItemMasterSchema = new mongoose.Schema({
   },
 
   under_group: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ItemGroup",
+    type: String,
     required: true,
   },
 
