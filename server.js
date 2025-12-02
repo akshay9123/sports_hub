@@ -16,6 +16,7 @@ import store from "./routes/store.routes.js"
 import salesinvoice from "./routes/salesInvoice.routes.js"
 import itemMaster from "./routes/itemMaster.routes.js"
 import ItemGroup from "./routes/itemGroup.routes.js";
+import Stockunit from "./routes/stockUnit.routes.js"
 
 // Database Connection
 connectDb();
@@ -43,6 +44,7 @@ app.use("/api/store", store)
 app.use("/api/salesinvoice", salesinvoice);
 app.use("/api/item_master", itemMaster)
 app.use("/api/item", ItemGroup)
+app.use("/api/stockunit", Stockunit)
 
 
 // server starting
