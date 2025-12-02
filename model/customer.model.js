@@ -221,9 +221,6 @@ const CustomerSchema = new mongoose.Schema({
   branch: {
     type: String,
   },
-
-// this is testing github 
-  // Attachments
   attachment: {
     type: String, // URL or local path
     default: null,
