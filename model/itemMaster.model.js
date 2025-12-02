@@ -13,10 +13,13 @@ const ItemMasterSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+
   under_group: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ItemGroup",
     required: true,
   },
+
   stock_unit: {
     type: String,
     required: true,
@@ -159,10 +162,6 @@ const ItemMasterSchema = new mongoose.Schema({
   },
 });
 
-
-
-
-
 ItemMasterSchema.pre("save", async function (next) {
   if (this.code) return next();
 
@@ -189,7 +188,5 @@ ItemMasterSchema.pre("save", async function (next) {
   }
 });
 
-
-
 const ItemMaster = mongoose.model("ItemMaster", ItemMasterSchema);
-export default ItemMaster
+export default ItemMaster;
