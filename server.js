@@ -18,6 +18,7 @@ import itemMaster from "./routes/itemMaster.routes.js"
 import ItemGroup from "./routes/itemGroup.routes.js";
 import Stockunit from "./routes/stockUnit.routes.js"
 import gstClassification from "./routes/gstClassification.routes.js"
+import itemCategroy from "./routes/itemCategory.routes.js"
 
 // Database Connection
 connectDb();
@@ -47,6 +48,7 @@ app.use("/api/item_master", itemMaster)
 app.use("/api/item", ItemGroup)
 app.use("/api/stockunit", Stockunit)
 app.use("/api/gstclassification", gstClassification)
+app.use("/api/itemcategory", itemCategroy)
 
 
 // server starting
