@@ -1,4 +1,4 @@
-import CoaGroups from "../model/coaGroups.model";
+import CoaGroups from "../model/coaGroups.model.js";
 
 // ================================
 // CREATE GROUP
