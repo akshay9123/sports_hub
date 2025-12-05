@@ -130,3 +130,34 @@ export const deleteSalesAccount = async (req, res) => {
     });
   }
 };
+
+
+// ============================
+// Get Sales Account by Code
+// ============================
+export const getSalesAccountByCode = async (req, res) => {
+  try {
+    const { code } = req.params;
+
+    const account = await SalesAccount.findOne({ code });
+
+    if (!account) {
+      return res.status(404).json({
+        success: false,
+        message: "Sales Account with this code not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: account,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching account by code",
+      error: error.message,
+    });
+  }
+};
