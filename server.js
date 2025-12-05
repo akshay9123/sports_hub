@@ -15,12 +15,13 @@ import priceCategory from './routes/priceCategory.routes.js'
 import store from "./routes/store.routes.js"
 import salesinvoice from "./routes/salesInvoice.routes.js"
 import itemMaster from "./routes/itemMaster.routes.js"
-import ItemGroup from "./routes/itemGroup.routes.js";
+import ItemGroup from "./routes/itemGroup.routes.js"
 import Stockunit from "./routes/stockUnit.routes.js"
 import gstClassification from "./routes/gstClassification.routes.js"
 import itemCategroy from "./routes/itemCategory.routes.js"
 import ItemBrand from "./routes/itemBrand.routes.js";
 import salesPurchaseGl from "./routes/salesPurchaseGl.routes.js"
+import coagroups from './routes/coaGroups.routes.js'
 
 // Database Connection
 connectDb();
@@ -53,6 +54,7 @@ app.use("/api/gstclassification", gstClassification)
 app.use("/api/itemcategory", itemCategroy)
 app.use("/api/itembrand", ItemBrand)
 app.use("/api/salespurchasegl", salesPurchaseGl);
+app.use("/api/coagroups", coagroups)
 
 
 // server starting
