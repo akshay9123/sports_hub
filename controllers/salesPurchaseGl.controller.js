@@ -1,4 +1,4 @@
-import SalesAccount from "../model/salesGl.model.js";
+import SalesAccount from "../model/salesPurchaseGl.model.js";
 
 // ===================================================
 // CREATE (Code auto-generate hoga using pre-save hook)
