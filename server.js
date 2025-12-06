@@ -22,6 +22,7 @@ import itemCategroy from "./routes/itemCategory.routes.js"
 import ItemBrand from "./routes/itemBrand.routes.js";
 import salesPurchaseGl from "./routes/salesPurchaseGl.routes.js"
 import coagroups from './routes/coaGroups.routes.js'
+import stockadjustment from './routes/stockAdjustment.routes.js'
 
 // Database Connection
 connectDb();
@@ -55,6 +56,7 @@ app.use("/api/itemcategory", itemCategroy)
 app.use("/api/itembrand", ItemBrand)
 app.use("/api/salespurchasegl", salesPurchaseGl);
 app.use("/api/coagroups", coagroups)
+app.use("/api/stockadjustment", stockadjustment)
 
 
 // server starting
