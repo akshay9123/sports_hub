@@ -1,11 +1,23 @@
-import StockAdjustment from "../model/stockAdjustment.model.js"; // <-- path adjust karo
+import StockAdjustment from "../model/stockAdjustment.model.js"; // path adjust if needed
 
-// ========================= CREATE =========================
+/* =========================================================
+   CREATE STOCK ADJUSTMENT  (supports file + form-data)
+========================================================= */
 export const createStockAdjustment = async (req, res) => {
   try {
-    const data = req.body;
+    let data = req.body;
 
-    // Auto calculate amount if rate & quantity present
+    // 📌 If items comes as string (form-data case)
+    if (typeof data.items === "string") {
+      data.items = JSON.parse(data.items);
+    }
+
+    // 📌 File Upload handle
+    if (req.file) {
+      data.attachment = `/uploads/attachments/${req.file.filename}`;
+    }
+
+    // 📌 Auto amount = quantity * rate
     if (data.items && data.items.length > 0) {
       data.items = data.items.map((item) => ({
         ...item,
@@ -15,16 +27,15 @@ export const createStockAdjustment = async (req, res) => {
       }));
     }
 
-    const newEntry = new StockAdjustment(data);
-    const saved = await newEntry.save();
+    const saved = await StockAdjustment.create(data);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Stock Adjustment created successfully",
       data: saved,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error creating stock adjustment",
       error: error.message,
@@ -32,7 +43,9 @@ export const createStockAdjustment = async (req, res) => {
   }
 };
 
-// ========================= GET ALL =========================
+/* =========================================================
+   GET ALL
+========================================================= */
 export const getAllStockAdjustments = async (req, res) => {
   try {
     const data = await StockAdjustment.find().sort({ createdAt: -1 });
@@ -51,7 +64,9 @@ export const getAllStockAdjustments = async (req, res) => {
   }
 };
 
-// ========================= GET BY ID =========================
+/* =========================================================
+   GET SINGLE BY ID
+========================================================= */
 export const getStockAdjustmentById = async (req, res) => {
   try {
     const data = await StockAdjustment.findById(req.params.id);
@@ -70,13 +85,25 @@ export const getStockAdjustmentById = async (req, res) => {
   }
 };
 
-// ========================= UPDATE =========================
+/* =========================================================
+   UPDATE STOCK ADJUSTMENT (Supports new file + items JSON)
+========================================================= */
 export const updateStockAdjustment = async (req, res) => {
   try {
     let data = req.body;
 
-    // recalc amount if rate/qty changed
-    if (data.items) {
+    // 📌 If items JSON string me aaye
+    if (typeof data.items === "string") {
+      data.items = JSON.parse(data.items);
+    }
+
+    // 📌 File replace hua to update file path
+    if (req.file) {
+      data.attachment = `/uploads/attachments/${req.file.filename}`;
+    }
+
+    // 📌 Amount recalc
+    if (data.items && data.items.length > 0) {
       data.items = data.items.map((item) => ({
         ...item,
         amount:
@@ -101,7 +128,7 @@ export const updateStockAdjustment = async (req, res) => {
       data: updated,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error updating",
       error: error.message,
@@ -109,7 +136,9 @@ export const updateStockAdjustment = async (req, res) => {
   }
 };
 
-// ========================= DELETE =========================
+/* =========================================================
+   DELETE
+========================================================= */
 export const deleteStockAdjustment = async (req, res) => {
   try {
     const deleted = await StockAdjustment.findByIdAndDelete(req.params.id);
