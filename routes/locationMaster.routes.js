@@ -9,10 +9,11 @@ import {
 } from "../controllers/locationMaster.controller.js";
 
 const router = express.Router();
+import upload from "../config/multer.js";
 
-router.post("/create", createLocation);
+router.post("/create", upload.single("profilePic"), createLocation);
 router.get("/getall", getAllLocations);
-router.get("/getbyid/:id", getLocationById);
+router.get("/getbyid/:id", upload.single("profilePic"), getLocationById);
 router.put("/update/:id", updateLocation);
 router.delete("/delete/:id", deleteLocation);
 router.get("/getbycode/:code", getLocationByCode);
