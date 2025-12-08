@@ -23,6 +23,8 @@ import ItemBrand from "./routes/itemBrand.routes.js";
 import salesPurchaseGl from "./routes/salesPurchaseGl.routes.js"
 import coagroups from './routes/coaGroups.routes.js'
 import stockadjustment from './routes/stockAdjustment.routes.js'
+import documentcategoryinventroy from "./routes/documentCategoryInventroy.routes.js";
+import locationMaster from "./routes/locationMaster.routes.js"
 
 // Database Connection
 connectDb();
@@ -57,6 +59,8 @@ app.use("/api/itembrand", ItemBrand)
 app.use("/api/salespurchasegl", salesPurchaseGl);
 app.use("/api/coagroups", coagroups)
 app.use("/api/stockadjustment", stockadjustment)
+app.use("/api/documentcategoryinventory", documentcategoryinventroy)
+app.use("/api/locationmaster", locationMaster)
 
 
 // server starting
