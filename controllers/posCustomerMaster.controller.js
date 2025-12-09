@@ -13,13 +13,13 @@ export const createCustomer = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Customer created successfully",
+      message: " Pos Customer created successfully",
       data: newCustomer,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to create customer",
+      message: "Failed to create Pos customer",
       error: error.message,
     });
   }
@@ -48,7 +48,7 @@ export const getCustomerByCode = async (req, res) => {
     if (!customer) {
       return res
         .status(404)
-        .json({ success: false, message: "Customer not found" });
+        .json({ success: false, message: " Pos Customer not found" });
     }
 
     res.status(200).json({ success: true, data: customer });
@@ -75,13 +75,13 @@ export const updateCustomer = async (req, res) => {
     if (!updatedCustomer) {
       return res.status(404).json({
         success: false,
-        message: "Customer not found",
+        message: "Pos Customer not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Customer updated successfully",
+      message: "Pos Customer updated successfully",
       data: updatedCustomer,
     });
   } catch (error) {
@@ -102,12 +102,12 @@ export const deleteCustomer = async (req, res) => {
     if (!deleted) {
       return res
         .status(404)
-        .json({ success: false, message: "Customer not found" });
+        .json({ success: false, message: "Pos Customer not found" });
     }
 
     res
       .status(200)
-      .json({ success: true, message: "Customer deleted successfully" });
+      .json({ success: true, message: "Pos Customer deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -121,7 +121,7 @@ export const getCustomerById = async (req, res) => {
     if (!customer) {
       return res
         .status(404)
-        .json({ success: false, message: "Customer not found" });
+        .json({ success: false, message: "Pos Customer not found" });
     }
 
     res.status(200).json({ success: true, data: customer });
