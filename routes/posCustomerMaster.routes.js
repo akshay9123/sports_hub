@@ -14,7 +14,7 @@ router.post("/create", createCustomer);
 router.get("/getall", getAllCustomers);
 router.get("/getcustomerbycode/:code", getCustomerByCode);
 router.put("/update/:id", updateCustomer);
-router.delete("/customer/:code", deleteCustomer);
+router.delete("/customer/:id", deleteCustomer);
 router.get("/customer/id/:id", getCustomerById);   
 
 export default router;
