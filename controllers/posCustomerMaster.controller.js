@@ -95,9 +95,7 @@ export const updateCustomer = async (req, res) => {
 // 🔴 Delete Customer
 export const deleteCustomer = async (req, res) => {
   try {
-    const deleted = await PosCustomerMaster.findOneAndDelete({
-      code: req.params.code,
-    });
+    const deleted = await PosCustomerMaster.findByIdAndDelete(req.params.id);
 
     if (!deleted) {
       return res
@@ -105,13 +103,18 @@ export const deleteCustomer = async (req, res) => {
         .json({ success: false, message: "Pos Customer not found" });
     }
 
-    res
-      .status(200)
-      .json({ success: true, message: "Pos Customer deleted successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Pos Customer deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
 
 // 🔵 Get Customer by MongoDB _id
 export const getCustomerById = async (req, res) => {
