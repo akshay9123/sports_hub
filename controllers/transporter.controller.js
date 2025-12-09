@@ -3,26 +3,16 @@ import Transporter from "../model/transporter.model.js";
 // Create Transporter
 export const createTransporter = async (req, res) => {
   try {
-    const { code, name, gstNo, websiteUrl } = req.body;
+    const { name, gstNo, websiteUrl } = req.body;
 
-    if (!name || !gstNo || !code) {
+    if (!name || !gstNo) {
       return res.status(400).json({
         success: false,
-        message: "Code, Name & GST No are required",
-      });
-    }
-
-    // Check duplicate code
-    const exist = await Transporter.findOne({ code });
-    if (exist) {
-      return res.status(400).json({
-        success: false,
-        message: "Code already exists",
+        message: "Name & GST No required",
       });
     }
 
     const transporter = await Transporter.create({
-      code,
       name,
       gstNo,
       websiteUrl,
@@ -37,6 +27,7 @@ export const createTransporter = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 // Get All Transporters
 export const getTransporters = async (req, res) => {
