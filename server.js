@@ -25,6 +25,7 @@ import coagroups from './routes/coaGroups.routes.js'
 import stockadjustment from './routes/stockAdjustment.routes.js'
 import documentcategoryinventroy from "./routes/documentCategoryInventroy.routes.js";
 import locationMaster from "./routes/locationMaster.routes.js"
+import interbranchtransfer from './routes/interBranchTransfer.routes.js'
 
 // Database Connection
 connectDb();
@@ -61,6 +62,7 @@ app.use("/api/coagroups", coagroups)
 app.use("/api/stockadjustment", stockadjustment)
 app.use("/api/documentcategoryinventory", documentcategoryinventroy)
 app.use("/api/locationmaster", locationMaster)
+app.use("/api/interbranch", interbranchtransfer)
 
 
 // server starting

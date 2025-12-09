@@ -18,7 +18,7 @@ const locatinMasterSchema = new mongoose.Schema({
     type: String
   },
 
-  // COMPLIANCE
+  // COMPLIANCE           
   gstNo: {
     type: String,
   },
