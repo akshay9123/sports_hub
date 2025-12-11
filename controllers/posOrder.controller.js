@@ -127,3 +127,30 @@ export const deleteOrderById = async (req, res) => {
     });
   }
 };
+
+
+export const getPosOrderById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const order = await PosOrder.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "PosOrder not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    console.error("Error fetching PosOrder by ID:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
