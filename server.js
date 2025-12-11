@@ -28,6 +28,7 @@ import locationMaster from "./routes/locationMaster.routes.js"
 import interbranchtransfer from './routes/interBranchTransfer.routes.js'
 import transporter from './routes/transporter.routes.js'
 import poscustomermaster from './routes/posCustomerMaster.routes.js'
+import posorder from './routes/posOrder.routes.js'
 
 // Database Connection
 connectDb();
@@ -67,6 +68,7 @@ app.use("/api/locationmaster", locationMaster)
 app.use("/api/interbranch", interbranchtransfer)
 app.use("/api/transporter", transporter)
 app.use("/api/poscustomermaster", poscustomermaster)
+app.use("/api/posorder", posorder)
 
 
 // server starting
