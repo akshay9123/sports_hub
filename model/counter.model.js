@@ -52,6 +52,9 @@ const CounterSchema = new mongoose.Schema({
   manageDayStartClose: {
     type: Boolean,
   },
+  hideTax:{
+    type: Boolean
+  }
 },{timestamps: true});
 
 

@@ -31,6 +31,7 @@ import poscustomermaster from './routes/posCustomerMaster.routes.js'
 import posorder from './routes/posOrder.routes.js'
 import counter from './routes/counter.routes.js'
 import salesexecutive from './routes/salesExecutive.routes.js'
+import charsofaccount from './routes/chartsOfAccount.routes.js'
 
 // Database Connection
 connectDb();
@@ -73,6 +74,7 @@ app.use("/api/poscustomermaster", poscustomermaster)
 app.use("/api/posorder", posorder)
 app.use("/api/counter",counter)
 app.use("/api/salesexecutive", salesexecutive)
+app.use("/api/chartofaccount", charsofaccount)
 
 
 // server starting
