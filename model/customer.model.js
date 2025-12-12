@@ -204,6 +204,7 @@ const CustomerSchema = new mongoose.Schema({
   customer_category: {
     type: String,
   },
+  
   contact_person: {
     type: String,
   },
