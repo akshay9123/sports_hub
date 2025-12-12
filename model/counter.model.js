@@ -52,7 +52,7 @@ const CounterSchema = new mongoose.Schema({
   manageDayStartClose: {
     type: Boolean,
   },
-});
+},{timestamps: true});
 
 
 CounterSchema.pre("save", async function (next) {
