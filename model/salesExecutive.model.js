@@ -38,7 +38,7 @@ SalesExecutiveSchema.pre("save", async function (next) {
 
   if (lastDoc && lastDoc.code) {
     const lastNum = parseInt(lastDoc.code);
-    nextCode = String(lastNum + 1).padStart(7, "0");
+    nextCode = String(lastNum + 1).padStart(4, "0");
   }
 
   this.code = nextCode;
