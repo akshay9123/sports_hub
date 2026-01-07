@@ -25,8 +25,10 @@ const ItemGroupSchema = new mongoose.Schema({
   item_type: {
     type: String,
   },
-  unit_option: {
-    type: String,
+  stock_unit: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "StockUnit", // 👈 model name
+    required: true,
   },
   stock_unit: {
     type: String,
@@ -67,6 +69,32 @@ const ItemGroupSchema = new mongoose.Schema({
   },
 });
 
+
+ItemGroupSchema.pre("save", async function (next) {
+  if (this.code) return next();
+
+  try {
+    // Find last item whose code is ONLY digits
+    const lastItem = await mongoose
+      .model("ItemGroup")
+      .findOne({ code: { $regex: /^[0-9]+$/ } })
+      .sort({ code: -1 });
+
+    let newCode = "00001";
+
+    if (lastItem && lastItem.code) {
+      const lastCodeNum = Number(lastItem.code);
+      const nextCodeNum = lastCodeNum + 1;
+
+      newCode = nextCodeNum.toString().padStart(5, "0");
+    }
+
+    this.code = newCode;
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 const ItemGroup = mongoose.model("ItemGroup", ItemGroupSchema)
 export default ItemGroup

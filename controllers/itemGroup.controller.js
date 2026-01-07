@@ -1,6 +1,5 @@
 import ItemGroup from "../model/itemGroup.model.js";
 
-
 // Function to generate next code
 const generateNextCode = async () => {
   // Find last saved ItemGroup sorted by code (descending)
@@ -15,8 +14,6 @@ const generateNextCode = async () => {
 
   return newCode;
 };
-
-
 
 // CREATE ITEM GROUP
 export const createItemGroup = async (req, res) => {
@@ -45,19 +42,25 @@ export const createItemGroup = async (req, res) => {
   }
 };
 
-
-
-// GET ALL ITEMS
+// GET ALL ITEM GROUPS
 export const getAllItemGroups = async (req, res) => {
   try {
-    const items = await ItemGroup.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, data: items });
+    const items = await ItemGroup.find()
+      .populate("stock_unit", "code name uqc desc roundoff_decimal")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: items,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch item groups",
+      error: error.message,
+    });
   }
 };
-
-
 
 // GET SINGLE ITEM BY ID
 export const getItemGroup = async (req, res) => {
@@ -70,8 +73,6 @@ export const getItemGroup = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-
 
 // UPDATE ITEM
 export const updateItemGroup = async (req, res) => {
@@ -91,7 +92,6 @@ export const updateItemGroup = async (req, res) => {
   }
 };
 
-
 // DELETE ITEM
 export const deleteItemGroup = async (req, res) => {
   try {
@@ -108,8 +108,6 @@ export const deleteItemGroup = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-
 
 export const getItemGroupByCode = async (req, res) => {
   try {

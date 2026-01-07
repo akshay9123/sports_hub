@@ -31,12 +31,22 @@ const itemSchema = new mongoose.Schema({
 const stockAdjustmentSchema = new mongoose.Schema(
   {
     category: { type: String, required: true, trim: true },
-    store: { type: String, required: true, trim: true },
-    party: { type: String, required: true, trim: true },
+    store: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "LocationMaster", // 👈 LocationMaster model
+      required: true,
+    },
+
+    party: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer", // 👈 Customer model
+      required: true,
+    },
+
     voucherDate: { type: Date, required: true },
     voucherNo: { type: String, required: true, unique: true, trim: true },
-    remarks: { type: String},
-    attachment: {type: String},
+    remarks: { type: String },
+    attachment: { type: String },
 
     // 🆕 Multiple items list
     items: [itemSchema],

@@ -1,77 +1,80 @@
 import mongoose from "mongoose";
 
 
-const ChartsOfAccountsSchema = new mongoose.Schema({
+const ChartsOfAccountsSchema = new mongoose.Schema(
+  {
     code: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     identification: {
-        type: String
+      type: String,
     },
     isSubleder: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-    underLedger : {
-        type: String
+    underLedger: {
+      type: String,
     },
-    underGroup : {
-        type: String
+    underGroup: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CoaGroups",
+      required: true,
     },
     type: {
-        type: String
+      type: String,
     },
     accountNo: {
-        type: String
+      type: String,
     },
-    ifscRtgs : {
-        type: String
+    ifscRtgs: {
+      type: String,
     },
-    classification : {
-        type: String
+    classification: {
+      type: String,
     },
     isLoanAccount: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     intrestRate: {
-        type: Number
+      type: Number,
     },
-    calcultaionOn:{
-        type: String
+    calcultaionOn: {
+      type: String,
     },
     tdsApplicable: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     tdsSection: {
-        type: String
+      type: String,
     },
     address: {
-        type: String
+      type: String,
     },
     pan: {
-        type: String
+      type: String,
     },
-
-
 
     // ATTRIBUTES APPLICABLE
 
-    employee:{
-        type: Boolean,
-        default: false
+    employee: {
+      type: Boolean,
+      default: false,
     },
     group: {
-        type: Boolean,
-        default: false
-    }
-},{timestamps: true})
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 
 
 // Auto-generate code ALWAYS

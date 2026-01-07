@@ -15,14 +15,17 @@ const ItemMasterSchema = new mongoose.Schema({
   },
 
   under_group: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ItemGroup",
     required: true,
   },
 
   stock_unit: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "StockUnit", // 👈 model name
     required: true,
   },
+
   gst_classfication: {
     type: String,
   },
@@ -59,7 +62,7 @@ const ItemMasterSchema = new mongoose.Schema({
   },
   sales_gl: {
     type: String,
-    required: true,
+   
   },
   mrp: {
     type: String,
@@ -92,7 +95,7 @@ const ItemMasterSchema = new mongoose.Schema({
   },
   purchase_gl: {
     type: String,
-    required: true,
+   
   },
   purchase_rate: {
     type: String,

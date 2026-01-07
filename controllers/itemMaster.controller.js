@@ -39,6 +39,8 @@ export const getAllItems = async (req, res) => {
     if (brand) query.brand = brand;
 
     const items = await ItemMaster.find(query)
+      .populate("under_group", "item_name code")     // 🔗 ItemGroup
+      .populate("stock_unit", "code name uqc")       // 🔗 StockUnit
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
@@ -52,9 +54,14 @@ export const getAllItems = async (req, res) => {
       data: items,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
+
 
 // Get Single Item by ID
 export const getItemById = async (req, res) => {

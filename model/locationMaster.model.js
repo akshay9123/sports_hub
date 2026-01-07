@@ -10,15 +10,16 @@ const locatinMasterSchema = new mongoose.Schema({
     unique: true,
   },
   party: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Customer", // 👈 Customer model
     required: true,
   },
 
   profilePic: {
-    type: String
+    type: String,
   },
 
-  // COMPLIANCE           
+  // COMPLIANCE
   gstNo: {
     type: String,
   },
@@ -44,29 +45,28 @@ const locatinMasterSchema = new mongoose.Schema({
     type: String,
   },
 
-
   //   ADDRESS
   address: {
-    type: String
+    type: String,
   },
   country: {
-    type: String
+    type: String,
   },
-  state:{
-    type: String
+  state: {
+    type: String,
   },
   city: {
-    type: String
+    type: String,
   },
   pinCode: {
-    type: String
+    type: String,
   },
   phone: {
-    type: String
+    type: String,
   },
   email: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 

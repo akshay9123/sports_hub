@@ -18,10 +18,11 @@ const CustomerSchema = new mongoose.Schema({
   },
   code: {
     type: String,
-    required: true,
+    unique: true,
   },
   under_ledger: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ChartsOfAccounts",
     required: true,
   },
   cust_comman: {
@@ -37,8 +38,6 @@ const CustomerSchema = new mongoose.Schema({
     type: String, // URL or local path
     default: null,
   },
-
-  
 
   // statuory
   gst: {
@@ -68,8 +67,6 @@ const CustomerSchema = new mongoose.Schema({
   tds_on_gst_applicable: {
     type: Boolean,
   },
-
-
 
   // Communication
   // Billing Info
@@ -106,9 +103,6 @@ const CustomerSchema = new mongoose.Schema({
   route_map: {
     type: String,
   },
-  
-
-
 
   // Shipping Info
   address_ship: {
@@ -144,9 +138,6 @@ const CustomerSchema = new mongoose.Schema({
     type: String,
   },
 
-
-
-
   // Social Profile
   website: {
     type: String,
@@ -163,9 +154,6 @@ const CustomerSchema = new mongoose.Schema({
   linkedin: {
     type: String,
   },
-
-
-
 
   // DEFAULTS
   payment_term: {
@@ -204,7 +192,7 @@ const CustomerSchema = new mongoose.Schema({
   customer_category: {
     type: String,
   },
-  
+
   contact_person: {
     type: String,
   },
@@ -222,6 +210,25 @@ const CustomerSchema = new mongoose.Schema({
   branch: {
     type: String,
   },
+
+  // contact person
+  contact: [
+    {
+      name: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
+      phone: {
+        type: String,
+      },
+      designation: {
+        type: String,
+      },
+    },
+  ],
+  
   attachment: {
     type: String, // URL or local path
     default: null,
@@ -229,9 +236,23 @@ const CustomerSchema = new mongoose.Schema({
 });
 
 
+// Auto-generate code ALWAYS
+CustomerSchema.pre("save", async function (next) {
+  // ALWAYS auto-generate -- user can never give code
+  const lastDoc = await this.constructor.findOne().sort({ code: -1 });
 
+  let nextCode = "0001";
 
+  if (lastDoc && lastDoc.code) {
+    const lastNum = parseInt(lastDoc.code);
+    nextCode = String(lastNum + 1).padStart(4, "0");
+  }
+
+  this.code = nextCode;
+
+  next();
+});
 
 const Customer = mongoose.model("Customer", CustomerSchema);
 
-export default Customer
+export default Customer;

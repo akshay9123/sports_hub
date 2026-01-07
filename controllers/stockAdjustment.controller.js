@@ -48,7 +48,10 @@ export const createStockAdjustment = async (req, res) => {
 ========================================================= */
 export const getAllStockAdjustments = async (req, res) => {
   try {
-    const data = await StockAdjustment.find().sort({ createdAt: -1 });
+    const data = await StockAdjustment.find()
+      .populate("store") // 🔗 LocationMaster
+      .populate("party") // 🔗 Customer (FULL data)
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -63,6 +66,8 @@ export const getAllStockAdjustments = async (req, res) => {
     });
   }
 };
+
+
 
 /* =========================================================
    GET SINGLE BY ID

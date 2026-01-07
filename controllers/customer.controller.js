@@ -43,7 +43,16 @@ export const addCustomer = async (req, res) => {
 // GET THE LIST OF THE ALL CUSTOMERS
 export const getAllCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find().sort({ createdAt: -1 });
+    const customers = await Customer.find()
+      .populate({
+        path: "under_ledger", // ChartsOfAccounts
+        select: "code name type classification underGroup",
+        populate: {
+          path: "underGroup", // CoaGroups
+          select: "name code nature inactive",
+        },
+      })
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -58,6 +67,7 @@ export const getAllCustomers = async (req, res) => {
     });
   }
 };
+
 
 
 

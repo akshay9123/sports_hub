@@ -28,7 +28,10 @@ export const createChartsAccount = async (req, res) => {
 // GET ALL
 export const getAllChartsAccounts = async (req, res) => {
   try {
-    const data = await ChartsOfAccounts.find().sort({ createdAt: -1 });
+    const data = await ChartsOfAccounts.find()
+      .populate("underGroup", "name code nature inactive")
+      .populate("underLedger", "name code")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data });
   } catch (error) {
