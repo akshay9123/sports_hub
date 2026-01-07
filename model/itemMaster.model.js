@@ -32,10 +32,12 @@ const ItemMasterSchema = new mongoose.Schema({
 
   //   ADVANCE INFO
   category: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ItemCategory",
   },
   brand: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Brand",
   },
   type: {
     type: String,
@@ -59,10 +61,6 @@ const ItemMasterSchema = new mongoose.Schema({
   // SALES CONFIG
   sale_desc: {
     type: String,
-  },
-  sales_gl: {
-    type: String,
-   
   },
   mrp: {
     type: String,
@@ -92,10 +90,6 @@ const ItemMasterSchema = new mongoose.Schema({
   // PURCHASE CONFIG
   purch_desc: {
     type: String,
-  },
-  purchase_gl: {
-    type: String,
-   
   },
   purchase_rate: {
     type: String,
