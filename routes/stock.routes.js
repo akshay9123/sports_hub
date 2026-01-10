@@ -4,7 +4,7 @@ import {
   getStockByItem,
   getStockByStoreAndItem,
   getStockByItemCode,
-} from "../controllers/stock.controller";
+} from "../controllers/stock.controller.js";
 
 const router = express.Router();
 

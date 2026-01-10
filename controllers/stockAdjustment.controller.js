@@ -263,3 +263,112 @@ export const createStockAdjustment = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const getAllStockAdjustments = async (req, res) => {
+  try {
+    const { store, fromDate, toDate } = req.query;
+
+    const filter = {};
+    if (store) filter.store = store;
+
+    if (fromDate && toDate) {
+      filter.voucherDate = {
+        $gte: new Date(fromDate),
+        $lte: new Date(toDate),
+      };
+    }
+
+    const data = await StockAdjustment.find(filter)
+      .populate("store", "name code")
+      .populate("party", "name")
+      .populate("items.item", "name code")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: data.length,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const getStockAdjustmentById = async (req, res) => {
+  try {
+    const data = await StockAdjustment.findById(req.params.id)
+      .populate("store", "name code")
+      .populate("party", "name")
+      .populate("items.item", "name code");
+
+    if (!data) {
+      return res.status(404).json({ message: "Stock Adjustment not found" });
+    }
+
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+export const getStockAdjustmentByVoucher = async (req, res) => {
+  try {
+    const { voucherNo } = req.params;
+
+    const data = await StockAdjustment.findOne({ voucherNo })
+      .populate("store", "name code")
+      .populate("party", "name")
+      .populate("items.item", "name code");
+
+    if (!data) {
+      return res.status(404).json({ message: "Voucher not found" });
+    }
+
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const reverseStockAdjustment = async (req, res) => {
+  try {
+    const adjustment = await StockAdjustment.findById(req.params.id);
+
+    if (!adjustment) {
+      return res.status(404).json({ message: "Adjustment not found" });
+    }
+
+    for (const row of adjustment.items) {
+      const storeStock = await StoreStock.findOne({
+        item: row.item,
+        store: adjustment.store,
+      });
+
+      if (!storeStock) continue;
+
+      if (row.adjustmentType === "RECEIPT") {
+        storeStock.quantity -= row.quantity;
+      }
+
+      if (row.adjustmentType === "ISSUE") {
+        storeStock.quantity += row.quantity;
+      }
+
+      await storeStock.save();
+    }
+
+    await StockAdjustment.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Stock adjustment reversed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
