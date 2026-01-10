@@ -1,55 +1,88 @@
 import mongoose from "mongoose";
 
-const itemSchema = new mongoose.Schema({
-  itemcode: { type: String, required: true, trim: true },
-  description: { type: String, trim: true },
-  packUnit: { type: String },
-  packQuantity: { type: Number },
-  unit: { type: String },
-  quantity: { type: Number },
-  ratePer: { type: Number },
-  rate: { type: Number },
-  amount: { type: Number },
-  minRate: { type: Number },
-  mrp: { type: Number },
-  netRate: { type: Number },
-  remark: { type: String },
-  printDesc: { type: String },
-  serviceLocation: { type: String },
-  itemBarcode: { type: String },
-  bdBatchNo: { type: String },
-  bdMfgDate: { type: Date },
-  bdExpDate: { type: Date },
-  bdSaleRate: { type: Number },
-  itemBalance: { type: Number },
-  barcode: { type: String },
-  lineLevelBarcode: { type: String },
-  hsnCode: { type: String },
-  brand: { type: String },
+const stockAdjustmentItemSchema = new mongoose.Schema({
+  item: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ItemMaster",
+    
+  },
+
+  adjustmentType: {
+    type: String,
+    enum: ["RECEIPT", "ISSUE"], // Increase / Decrease
+    required: true,
+  },
+
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
+
+  unit: {
+    type: String,
+    default: "PCS",
+  },
+
+  rate: {
+    type: Number,
+    required: true,
+  },
+
+  amount: {
+    type: Number,
+    required: true,
+  },
 });
 
 const stockAdjustmentSchema = new mongoose.Schema(
   {
-    category: { type: String, required: true, trim: true },
+    voucherNo: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+
+    voucherDate: {
+      type: Date,
+      required: true,
+    },
+
+    category: {
+      type: String,
+      default: "Stock Adjustment",
+    },
+
     store: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "LocationMaster", // 👈 LocationMaster model
+      ref: "Store",
       required: true,
     },
 
     party: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer", // 👈 Customer model
-      required: true,
+      ref: "Customer",
     },
 
-    voucherDate: { type: Date, required: true },
-    voucherNo: { type: String, required: true, unique: true, trim: true },
-    remarks: { type: String },
-    attachment: { type: String },
+    items: [stockAdjustmentItemSchema],
 
-    // 🆕 Multiple items list
-    items: [itemSchema],
+    totalAmount: {
+      type: Number,
+      default: 0,
+    },
+
+    remarks: {
+      type: String,
+    },
+
+    attachment: {
+      type: String, // file path / URL
+    },
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

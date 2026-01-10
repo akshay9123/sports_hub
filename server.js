@@ -33,6 +33,10 @@ import counter from './routes/counter.routes.js'
 import salesexecutive from './routes/salesExecutive.routes.js'
 import charsofaccount from './routes/chartsOfAccount.routes.js'
 import brand from './routes/brand.routes.js'
+import openingStock from './routes/openingStock.routes.js'
+import stock from "./routes/stock.routes.js";
+
+
 
 // Database Connection
 connectDb();
@@ -77,6 +81,8 @@ app.use("/api/counter",counter)
 app.use("/api/salesexecutive", salesexecutive)
 app.use("/api/chartofaccount", charsofaccount)
 app.use("/api/brand", brand)
+app.use("/api/openingstock", openingStock)
+app.use("/api/stock", stock);
 
 
 // server starting

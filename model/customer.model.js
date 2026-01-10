@@ -14,7 +14,6 @@ const CustomerSchema = new mongoose.Schema({
   },
   identification: {
     type: String,
-    required: true,
   },
   code: {
     type: String,
@@ -79,11 +78,9 @@ const CustomerSchema = new mongoose.Schema({
   },
   state: {
     type: String,
-    required: true,
   },
   city: {
     type: String,
-    required: true,
   },
   pin_code: {
     type: String,
@@ -113,11 +110,9 @@ const CustomerSchema = new mongoose.Schema({
   },
   state_ship: {
     type: String,
-    required: true,
   },
   city_ship: {
     type: String,
-    required: true,
   },
   pin_code_ship: {
     type: String,

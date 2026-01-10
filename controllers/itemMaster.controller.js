@@ -2,7 +2,9 @@ import ItemMaster from "../model/itemMaster.model.js";
 import fs from "fs";
 import path from "path";
 
-// Create Item
+/* =========================
+   CREATE ITEM
+========================= */
 export const createItem = async (req, res) => {
   try {
     const data = req.body;
@@ -27,8 +29,9 @@ export const createItem = async (req, res) => {
   }
 };
 
-
-// Get All Items (with optional filtering + pagination)
+/* =========================
+   GET ALL ITEMS (Opening Stock / Adjustment UI)
+========================= */
 export const getAllItems = async (req, res) => {
   try {
     const { page = 1, limit = 20, search, category, brand } = req.query;
@@ -39,6 +42,7 @@ export const getAllItems = async (req, res) => {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
         { code: { $regex: search, $options: "i" } },
+        { barcode: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -71,10 +75,9 @@ export const getAllItems = async (req, res) => {
   }
 };
 
-
-
-
-// Get Single Item by ID
+/* =========================
+   GET ITEM BY ID
+========================= */
 export const getItemById = async (req, res) => {
   try {
     const item = await ItemMaster.findById(req.params.id)
@@ -102,14 +105,15 @@ export const getItemById = async (req, res) => {
   }
 };
 
-
-// Update Item
+/* =========================
+   UPDATE ITEM (NO STOCK TOUCH)
+========================= */
 export const updateItem = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    // ❌ never allow code update
+    // Never allow code update
     delete updateData.code;
 
     const item = await ItemMaster.findById(id);
@@ -121,16 +125,12 @@ export const updateItem = async (req, res) => {
       });
     }
 
-    // Attachment update
+    // Handle attachment
     if (req.file) {
-      // delete old attachment
       if (item.attachment) {
         const oldPath = path.join(process.cwd(), item.attachment);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
-
       updateData.attachment = `/uploads/${req.file.filename}`;
     }
 
@@ -152,9 +152,9 @@ export const updateItem = async (req, res) => {
   }
 };
 
-
-
-// Delete Item
+/* =========================
+   DELETE ITEM
+========================= */
 export const deleteItem = async (req, res) => {
   try {
     const item = await ItemMaster.findById(req.params.id);
@@ -166,12 +166,9 @@ export const deleteItem = async (req, res) => {
       });
     }
 
-    // delete attachment if exists
     if (item.attachment) {
       const filePath = path.join(process.cwd(), item.attachment);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
 
     await ItemMaster.findByIdAndDelete(req.params.id);
@@ -188,21 +185,25 @@ export const deleteItem = async (req, res) => {
   }
 };
 
-
-
-// Get Item By Code
+/* =========================
+   GET ITEM BY CODE / BARCODE
+   (Used in Opening Stock & Adjustment)
+========================= */
 export const getItemByCode = async (req, res) => {
   try {
     const { code } = req.params;
 
     const item = await ItemMaster.findOne({
-      code: { $regex: `^${code}$`, $options: "i" },
+      $or: [
+        { code: { $regex: `^${code}$`, $options: "i" } },
+        { barcode: { $regex: `^${code}$`, $options: "i" } },
+      ],
     });
 
     if (!item) {
       return res.status(404).json({
         success: false,
-        message: "Item not found with this code",
+        message: "Item not found with this code/barcode",
       });
     }
 
@@ -218,3 +219,43 @@ export const getItemByCode = async (req, res) => {
   }
 };
 
+
+
+// GET REQUEST FOR SUGGESTED CATEGORY ITEM BY ID
+export const getSuggestedItems = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Item ID",
+      });
+    }
+
+    // Fetch item with suggested categories populated
+    const item = await ItemMaster.findById(itemId)
+      .populate("suggested_cat.itemId") // Populate suggested items
+      .select("name suggested_cat");
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      itemName: item.name,
+      suggestedItems: item.suggested_cat.map((s) => s.itemId),
+    });
+  } catch (error) {
+    console.error("Get Suggested Items Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
