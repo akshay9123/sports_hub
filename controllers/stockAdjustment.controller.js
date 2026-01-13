@@ -172,98 +172,164 @@ import StoreStock from "../model/StoreStock.model.js";
 import ItemMaster from "../model/itemMaster.model.js";
 
 // Auto Voucher Generator
-const generateVoucherNo = async () => {
-  const last = await StockAdjustment.findOne().sort({ createdAt: -1 });
-  if (!last) return "00001";
+// const generateVoucherNo = async () => {
+//   const last = await StockAdjustment.findOne().sort({ createdAt: -1 });
+//   if (!last) return "00001";
 
-  const num = parseInt(last.voucherNo) + 1;
-  return num.toString().padStart(5, "0");
-};
+//   const num = parseInt(last.voucherNo) + 1;
+//   return num.toString().padStart(5, "0");
+// };
 
 // CREATE STOCK ADJUSTMENT
+// export const createStockAdjustment = async (req, res) => {
+//   try {
+//     const { category, store, party, voucherDate, items, remarks } = req.body;
+
+//     if (!category || !store || !party || !voucherDate || !items?.length) {
+//       return res.status(400).json({ message: "All required fields missing" });
+//     }
+
+//     const voucherNo = await generateVoucherNo();
+
+//     // Process each item
+//     for (const row of items) {
+//       const { itemcode, quantity, rate, adjustmentType } = row;
+
+//       if (!itemcode || !quantity || !rate || !adjustmentType) {
+//         return res.status(400).json({ message: "Invalid item row data" });
+//       }
+
+//       const itemData = await ItemMaster.findOne({ code: itemcode });
+
+//       if (!itemData) {
+//         return res.status(404).json({ message: `Item not found: ${itemcode}` });
+//       }
+
+//       let storeStock = await StoreStock.findOne({
+//         item: itemData._id,
+//         store,
+//       });
+
+//       if (!storeStock) {
+//         storeStock = new StoreStock({
+//           item: itemData._id,
+//           store,
+//           quantity: 0,
+//         });
+//       }
+
+//       // STOCK LOGIC
+//       if (adjustmentType === "RECEIPT") {
+//         storeStock.quantity += Number(quantity);
+//       }
+
+//       if (adjustmentType === "ISSUE") {
+//         if (storeStock.quantity < quantity) {
+//           return res.status(400).json({
+//             message: `Insufficient stock for ${itemData.name}`,
+//           });
+//         }
+//         storeStock.quantity -= Number(quantity);
+//       }
+
+//       await storeStock.save();
+
+//       // Save snapshot in voucher
+//       row.description = itemData.name;
+//       row.amount = quantity * rate;
+//       row.itemBalance = storeStock.quantity;
+//     }
+
+//     const stockAdjustment = new StockAdjustment({
+//       category,
+//       store,
+//       party,
+//       voucherDate,
+//       voucherNo,
+//       items,
+//       remarks,
+//       attachment: req.file?.path,
+//     });
+
+//     await stockAdjustment.save();
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Stock adjustment saved successfully",
+//       data: stockAdjustment,
+//     });
+//   } catch (error) {
+//     console.error("Stock Adjustment Error:", error);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
+const generateVoucherNo = async () => {
+  const last = await StockAdjustment.findOne().sort({ createdAt: -1 });
+  if (!last) return "SA00001";
+  return (
+    "SA" +
+    (parseInt(last.voucherNo.replace("SA", "")) + 1).toString().padStart(5, "0")
+  );
+};
+
+
+
 export const createStockAdjustment = async (req, res) => {
   try {
-    const { category, store, party, voucherDate, items, remarks } = req.body;
+    const { store, voucherDate, items, remarks } = req.body;
 
-    if (!category || !store || !party || !voucherDate || !items?.length) {
-      return res.status(400).json({ message: "All required fields missing" });
+    if (!store || !voucherDate || !items?.length) {
+      return res.status(400).json({ message: "Required fields missing" });
     }
 
     const voucherNo = await generateVoucherNo();
 
-    // Process each item
     for (const row of items) {
-      const { itemcode, quantity, rate, adjustmentType } = row;
+      const { itemcode, quantity, adjustmentType, reason } = row;
 
-      if (!itemcode || !quantity || !rate || !adjustmentType) {
-        return res.status(400).json({ message: "Invalid item row data" });
-      }
-
-      const itemData = await ItemMaster.findOne({ code: itemcode });
-
-      if (!itemData) {
+      const item = await ItemMaster.findOne({ code: itemcode });
+      if (!item)
         return res.status(404).json({ message: `Item not found: ${itemcode}` });
+
+      let stock = await StoreStock.findOne({ item: item._id, store });
+      if (!stock)
+        stock = new StoreStock({ item: item._id, store, quantity: 0 });
+
+      if (adjustmentType === "ISSUE" && stock.quantity < quantity) {
+        return res
+          .status(400)
+          .json({ message: `Insufficient stock for ${item.name}` });
       }
 
-      let storeStock = await StoreStock.findOne({
-        item: itemData._id,
-        store,
-      });
+      if (adjustmentType === "RECEIPT") stock.quantity += Number(quantity);
+      if (adjustmentType === "ISSUE") stock.quantity -= Number(quantity);
 
-      if (!storeStock) {
-        storeStock = new StoreStock({
-          item: itemData._id,
-          store,
-          quantity: 0,
-        });
-      }
+      await stock.save();
 
-      // STOCK LOGIC
-      if (adjustmentType === "RECEIPT") {
-        storeStock.quantity += Number(quantity);
-      }
-
-      if (adjustmentType === "ISSUE") {
-        if (storeStock.quantity < quantity) {
-          return res.status(400).json({
-            message: `Insufficient stock for ${itemData.name}`,
-          });
-        }
-        storeStock.quantity -= Number(quantity);
-      }
-
-      await storeStock.save();
-
-      // Save snapshot in voucher
-      row.description = itemData.name;
-      row.amount = quantity * rate;
-      row.itemBalance = storeStock.quantity;
+      row.item = item._id;
+      row.rate = item.purchase_rate || 0;
+      row.amount = row.rate * quantity;
     }
 
-    const stockAdjustment = new StockAdjustment({
-      category,
-      store,
-      party,
-      voucherDate,
+    const adjustment = await StockAdjustment.create({
       voucherNo,
+      store,
+      voucherDate,
       items,
       remarks,
-      attachment: req.file?.path,
     });
 
-    await stockAdjustment.save();
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
-      message: "Stock adjustment saved successfully",
-      data: stockAdjustment,
+      message: "Stock adjustment completed",
+      data: adjustment,
     });
   } catch (error) {
-    console.error("Stock Adjustment Error:", error);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: error.message });
   }
 };
-
 
 export const getAllStockAdjustments = async (req, res) => {
   try {
@@ -281,7 +347,7 @@ export const getAllStockAdjustments = async (req, res) => {
 
     const data = await StockAdjustment.find(filter)
       .populate("store", "name code")
-      .populate("party", "name")
+      // .populate("party", "name")
       .populate("items.item", "name code")
       .sort({ createdAt: -1 });
 
