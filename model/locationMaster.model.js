@@ -69,10 +69,10 @@ const locatinMasterSchema = new mongoose.Schema({
   },
 
   // from here the calculation is done
-  item_name: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ItemMaster", // 👈 Item model
-  },
+  // item_name: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "ItemMaster", // 👈 Item model
+  // },
 
   item_quantity:{
     type: String

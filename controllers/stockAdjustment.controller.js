@@ -366,7 +366,7 @@ export const getStockAdjustmentById = async (req, res) => {
   try {
     const data = await StockAdjustment.findById(req.params.id)
       .populate("store", "name code")
-      .populate("party", "name")
+      // .populate("party", "name")
       .populate("items.item", "name code");
 
     if (!data) {
@@ -387,7 +387,7 @@ export const getStockAdjustmentByVoucher = async (req, res) => {
 
     const data = await StockAdjustment.findOne({ voucherNo })
       .populate("store", "name code")
-      .populate("party", "name")
+      // .populate("party", "name")
       .populate("items.item", "name code");
 
     if (!data) {

@@ -266,7 +266,7 @@ const ItemMasterSchema = new mongoose.Schema(
 
     // ADVANCE INFO
     category: { type: mongoose.Schema.Types.ObjectId, ref: "ItemCategory" },
-    brand: { type: mongoose.Schema.Types.ObjectId, ref: "ItemBrand" },
+    brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand" },
     type: { type: String },
     unit_option: { type: String },
     barcode: { type: String },
