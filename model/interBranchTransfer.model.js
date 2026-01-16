@@ -59,12 +59,11 @@ const LogisticsSchema = new mongoose.Schema({
 const InterBranchTransferSchema = new mongoose.Schema(
   {
     code: { type: String, unique: true },
-    category: { type: String, required: true },
-    store: { type: String, required: true },
+    category: { type: String },
+    store: { type: String },
     toStore: { type: String, required: true },
     transferNo: { type: String, unique: true },
     transferDate: { type: Date, required: true },
-    postingGl: { type: String, required: true },
 
     remarks: { type: String },
     attachment: { type: String },

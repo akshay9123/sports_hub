@@ -10,6 +10,18 @@ const SalesExecutiveSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    reporting_to: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SalesExecutive",
+      default: null,
+    },
+
+    underStore: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "LocationMaster",
+    },
+
     commisionRate: {
       type: String,
     },

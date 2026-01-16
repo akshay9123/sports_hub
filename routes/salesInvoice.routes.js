@@ -4,15 +4,24 @@ import {
   getAllSalesInvoices,
   getSalesInvoiceById,
   updateSalesInvoice,
-  deleteSalesInvoice,
+  cancelSalesInvoice,
 } from "../controllers/salesInvoice.controller.js";
 
 const router = express.Router();
 
-router.post("/invoice_create", createSalesInvoice); // CREATE
-router.get("/get_invoice_all", getAllSalesInvoices); // GET ALL
-router.get("/get_invoice_by_id/:id", getSalesInvoiceById); // GET ONE
-router.put("/update_invoice/:id", updateSalesInvoice); // UPDATE
-router.delete("/delete_invoice/:id", deleteSalesInvoice); // DELETE
+// CREATE INVOICE
+router.post("/invoice_create", createSalesInvoice);
+
+// GET ALL INVOICES (List View)
+router.get("/get_invoice_all", getAllSalesInvoices);
+
+// GET SINGLE INVOICE
+router.get("/get_invoice_by_id/:id", getSalesInvoiceById);
+
+// UPDATE INVOICE (Non-stock fields only)
+router.put("/update_invoice/:id", updateSalesInvoice);
+
+// CANCEL / DELETE INVOICE (With Stock Reversal)
+router.delete("/delete_invoice/:id", cancelSalesInvoice);
 
 export default router;

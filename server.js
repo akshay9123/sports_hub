@@ -35,6 +35,7 @@ import charsofaccount from './routes/chartsOfAccount.routes.js'
 import brand from './routes/brand.routes.js'
 import openingStock from './routes/openingStock.routes.js'
 import stock from "./routes/stock.routes.js";
+import purchasebill from './routes/purchaseBill.routes.js'
 
 
 
@@ -83,7 +84,7 @@ app.use("/api/chartofaccount", charsofaccount)
 app.use("/api/brand", brand)
 app.use("/api/openingstock", openingStock)
 app.use("/api/stock", stock);
-
+app.use("/api/purchasebill", purchasebill)
 
 // server starting
 app.listen(PORT, () => {

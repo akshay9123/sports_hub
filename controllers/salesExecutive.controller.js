@@ -3,8 +3,9 @@ import SalesExecutive from "../model/salesExecutive.model.js";
 // CREATE
 export const createSalesExecutive = async (req, res) => {
   try {
-    const body = req.body;
-    // Ensure user never sends code
+    const body = { ...req.body };
+
+    // Prevent manual code assignment
     if (body.code) delete body.code;
 
     const data = await SalesExecutive.create(body);
@@ -15,25 +16,36 @@ export const createSalesExecutive = async (req, res) => {
       data,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
 // GET ALL
 export const getAllSalesExecutives = async (req, res) => {
   try {
-    const data = await SalesExecutive.find().sort({ createdAt: -1 });
+    const data = await SalesExecutive.find()
+      .populate("reporting_to", "name code")
+      .populate("underStore", "name")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({ success: true, data });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
 // GET BY ID
 export const getSalesExecutiveById = async (req, res) => {
   try {
-    const data = await SalesExecutive.findById(req.params.id);
+    const data = await SalesExecutive.findById(req.params.id)
+      .populate("reporting_to", "name code")
+      .populate("underStore", "name");
 
     if (!data) {
       return res.status(404).json({
@@ -44,14 +56,19 @@ export const getSalesExecutiveById = async (req, res) => {
 
     return res.status(200).json({ success: true, data });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
 // GET BY CODE
 export const getSalesExecutiveByCode = async (req, res) => {
   try {
-    const data = await SalesExecutive.findOne({ code: req.params.code });
+    const data = await SalesExecutive.findOne({ code: req.params.code })
+      .populate("reporting_to", "name code")
+      .populate("underStore", "name");
 
     if (!data) {
       return res.status(404).json({
@@ -62,20 +79,25 @@ export const getSalesExecutiveByCode = async (req, res) => {
 
     return res.status(200).json({ success: true, data });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// UPDATE BY ID (code cannot be updated)
+// UPDATE BY ID (code is locked)
 export const updateSalesExecutiveById = async (req, res) => {
   try {
     const updates = { ...req.body };
-    if (updates.code) delete updates.code; // prevent update of code
+
+    // Prevent code modification
+    if (updates.code) delete updates.code;
 
     const data = await SalesExecutive.findByIdAndUpdate(
       req.params.id,
       updates,
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!data) {
@@ -91,7 +113,10 @@ export const updateSalesExecutiveById = async (req, res) => {
       data,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -112,6 +137,9 @@ export const deleteSalesExecutiveById = async (req, res) => {
       message: "Sales Executive deleted successfully",
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

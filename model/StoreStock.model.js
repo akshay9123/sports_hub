@@ -23,4 +23,6 @@ const storeStockSchema = new mongoose.Schema(
 storeStockSchema.index({ item: 1, store: 1 }, { unique: true });
 
 
-export default mongoose.model("StoreStock", storeStockSchema);
+// export default mongoose.model("StoreStock", storeStockSchema);
+export default mongoose.models.StoreStock ||
+  mongoose.model("StoreStock", storeStockSchema);

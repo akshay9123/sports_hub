@@ -170,6 +170,8 @@
 import StockAdjustment from "../model/stockAdjustment.model.js";
 import StoreStock from "../model/StoreStock.model.js";
 import ItemMaster from "../model/itemMaster.model.js";
+import { fifoDeduct } from "../config/fifoDeduction.js";
+import BatchStock from "../model/batchStock.model.js";
 
 // Auto Voucher Generator
 // const generateVoucherNo = async () => {
@@ -276,6 +278,62 @@ const generateVoucherNo = async () => {
 
 
 
+// export const createStockAdjustment = async (req, res) => {
+//   try {
+//     const { store, voucherDate, items, remarks } = req.body;
+
+//     if (!store || !voucherDate || !items?.length) {
+//       return res.status(400).json({ message: "Required fields missing" });
+//     }
+
+//     const voucherNo = await generateVoucherNo();
+
+//     for (const row of items) {
+//       const { itemcode, quantity, adjustmentType, reason } = row;
+
+//       const item = await ItemMaster.findOne({ code: itemcode });
+//       if (!item)
+//         return res.status(404).json({ message: `Item not found: ${itemcode}` });
+
+//       let stock = await StoreStock.findOne({ item: item._id, store });
+//       if (!stock)
+//         stock = new StoreStock({ item: item._id, store, quantity: 0 });
+
+//       if (adjustmentType === "ISSUE" && stock.quantity < quantity) {
+//         return res
+//           .status(400)
+//           .json({ message: `Insufficient stock for ${item.name}` });
+//       }
+
+//       if (adjustmentType === "RECEIPT") stock.quantity += Number(quantity);
+//       if (adjustmentType === "ISSUE") stock.quantity -= Number(quantity);
+
+//       await stock.save();
+
+//       row.item = item._id;
+//       row.rate = item.purchase_rate || 0;
+//       row.amount = row.rate * quantity;
+//     }
+
+//     const adjustment = await StockAdjustment.create({
+//       voucherNo,
+//       store,
+//       voucherDate,
+//       items,
+//       remarks,
+//     });
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Stock adjustment completed",
+//       data: adjustment,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
 export const createStockAdjustment = async (req, res) => {
   try {
     const { store, voucherDate, items, remarks } = req.body;
@@ -287,7 +345,7 @@ export const createStockAdjustment = async (req, res) => {
     const voucherNo = await generateVoucherNo();
 
     for (const row of items) {
-      const { itemcode, quantity, adjustmentType, reason } = row;
+      const { itemcode, quantity, adjustmentType, reason, batchNo } = row;
 
       const item = await ItemMaster.findOne({ code: itemcode });
       if (!item)
@@ -297,17 +355,38 @@ export const createStockAdjustment = async (req, res) => {
       if (!stock)
         stock = new StoreStock({ item: item._id, store, quantity: 0 });
 
+      // ❗ Store-level validation (unchanged)
       if (adjustmentType === "ISSUE" && stock.quantity < quantity) {
         return res
           .status(400)
           .json({ message: `Insufficient stock for ${item.name}` });
       }
 
-      if (adjustmentType === "RECEIPT") stock.quantity += Number(quantity);
-      if (adjustmentType === "ISSUE") stock.quantity -= Number(quantity);
+      // ============================
+      // FIFO + BATCH LOGIC (ADDED)
+      // ============================
+
+      if (adjustmentType === "ISSUE") {
+        await fifoDeduct(item._id, store, Number(quantity));
+        stock.quantity -= Number(quantity);
+      }
+
+      if (adjustmentType === "RECEIPT") {
+        await BatchStock.create({
+          item: item._id,
+          store,
+          batchNo: batchNo || `ADJ-${voucherNo}`,
+          quantity: Number(quantity),
+          rate: item.purchase_rate || 0,
+          receivedDate: voucherDate,
+        });
+
+        stock.quantity += Number(quantity);
+      }
 
       await stock.save();
 
+      // Voucher snapshot (unchanged)
       row.item = item._id;
       row.rate = item.purchase_rate || 0;
       row.amount = row.rate * quantity;
@@ -323,7 +402,7 @@ export const createStockAdjustment = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Stock adjustment completed",
+      message: "Stock adjustment completed (FIFO + Batch)",
       data: adjustment,
     });
   } catch (error) {

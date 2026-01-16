@@ -16,8 +16,10 @@ export const getStockByStore = async (req, res) => {
     }
 
     const stock = await StoreStock.find({ store })
-      .populate("item", "name code barcode")
-      .populate("store", "name code");
+      .populate(
+        "item"
+      )
+      .populate("store", "name code quantity");
 
     res.status(200).json({
       success: true,
